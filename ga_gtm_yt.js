@@ -1,6 +1,7 @@
 //Based on code originated by LunaMetrics http://www.lunametrics.com @lunametrics 
 //and Sayf Sharif @sayfsharif
 //Modified by Howard Blazzard - d50Media, to pass events to GTM DataLayer
+//updated 12/5/2013
 
 //instantiate youtube player api 
 
@@ -73,16 +74,26 @@ function onPlayerReady(event) {
 
 var _pauseFlag = false;
 
+function getIdFromUrl(url) {
+	var regex = /[?&]v=([^&]+)/;
+	var match = url.match(regex);
+	url = match[1];
+	return url;
+	}
+	
 function onPlayerStateChange(event) { 
 
-	videoarraynum = event.target.id - 1;
-	
+	//videoarraynum = event.target.id - 1;
+	var videoID;
+	var url = event.target.getVideoUrl();	
+	videoID = getIdFromUrl(url);
+
 	if (event.data ==YT.PlayerState.PLAYING){
-	
+
 		dataLayer.push({
 		'event': 'You Tube Videos',
 		'event_type': 'Play',
-		'video_id':videoArray[videoarraynum] 
+		'video_id':videoID
 		}); 
 		
 		_pauseFlag = false;
@@ -92,7 +103,7 @@ function onPlayerStateChange(event) {
 		dataLayer.push({
 		'event': 'You Tube Videos',
 		'event_type': 'Watch to End',
-		'video_id':videoArray[videoarraynum] 
+		'video_id':videoID
 		}); 
 	} 
 
@@ -101,8 +112,7 @@ function onPlayerStateChange(event) {
 		dataLayer.push({
 		'event': 'You Tube Videos',
 		'event_type': 'Pause',
-		'video_id':videoArray[videoarraynum],
-		'video_stop_point': playerArray[videoarraynum].getCurrentTime()
+		'video_id':videoID
 		}); 
 		_pauseFlag = true;
 	}
@@ -111,7 +121,7 @@ function onPlayerStateChange(event) {
 		dataLayer.push({
 		'event': 'You Tube Videos',
 		'event_type': 'Buffering',
-		'video_id':videoArray[videoarraynum] 
+		'video_id':videoID 
 		}); 
 	}
 	//and should it cue
@@ -120,7 +130,7 @@ function onPlayerStateChange(event) {
 		dataLayer.push({
 		'event': 'You Tube Videos',
 		'event_type': 'Cueing',
-		'video_id':videoArray[videoarraynum] 
+		'video_id':videoID 
 		}); 
 	} 
 } 
